@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import Link from "next/link";
 import {
   Search,
@@ -15,12 +15,24 @@ import {
 
 import { categories } from "@/data/categories";
 import MegaMenu from "./MegaMenu";
+import { CartContext } from "@/context/cartContext";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [activeCategory, setActiveCategory] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileCategory, setMobileCategory] = useState(null);
+
+  // Cart Context
+  const { cartItems, isHydrated } = useContext(CartContext);
+
+  // Calculate total quantity in cart
+  const cartCount = isHydrated
+    ? cartItems.reduce(
+        (total, item) => total + (item.quantity || 1),
+        0
+      )
+    : 0;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -114,6 +126,8 @@ export default function Navbar() {
 
           {/* Desktop Actions */}
           <div className="ml-auto hidden items-center gap-5 md:flex">
+
+            {/* Account */}
             <Link href="/account" aria-label="Account">
               <User
                 size={21}
@@ -122,6 +136,7 @@ export default function Navbar() {
               />
             </Link>
 
+            {/* Wishlist */}
             <Link href="/wishlist" aria-label="Wishlist">
               <Heart
                 size={21}
@@ -130,30 +145,63 @@ export default function Navbar() {
               />
             </Link>
 
-            <Link href="/cart" aria-label="Cart">
+            {/* Cart */}
+            <Link
+              href="/cart"
+              aria-label={`Cart with ${cartCount} items`}
+              className="relative"
+            >
               <ShoppingBag
                 size={21}
                 strokeWidth={1.6}
                 className="transition-opacity hover:opacity-60"
               />
+
+              {/* Cart Count */}
+              {isHydrated && cartCount > 0 && (
+                <span className="absolute -right-2.5 -top-2 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-black px-1 text-[9px] font-semibold text-white">
+                  {cartCount}
+                </span>
+              )}
             </Link>
           </div>
 
           {/* Mobile Actions */}
           <div className="ml-auto flex items-center gap-4 md:hidden">
-            <button type="button" aria-label="Search">
-              <Search size={21} strokeWidth={1.7} />
-            </button>
 
+            {/* Mobile Search */}
             <button
               type="button"
-              aria-label={mobileOpen ? "Close menu" : "Open menu"}
-              onClick={() => setMobileOpen((value) => !value)}
+              aria-label="Search"
+            >
+              <Search
+                size={21}
+                strokeWidth={1.7}
+              />
+            </button>
+
+            {/* Mobile Menu */}
+            <button
+              type="button"
+              aria-label={
+                mobileOpen
+                  ? "Close menu"
+                  : "Open menu"
+              }
+              onClick={() =>
+                setMobileOpen((value) => !value)
+              }
             >
               {mobileOpen ? (
-                <X size={23} strokeWidth={1.7} />
+                <X
+                  size={23}
+                  strokeWidth={1.7}
+                />
               ) : (
-                <Menu size={23} strokeWidth={1.7} />
+                <Menu
+                  size={23}
+                  strokeWidth={1.7}
+                />
               )}
             </button>
           </div>
@@ -195,68 +243,92 @@ export default function Navbar() {
               </p>
 
               <div className="border-t border-(--border)">
-                {Object.entries(categories).map(([key, category]) => {
-                  const isOpen = mobileCategory === key;
+                {Object.entries(categories).map(
+                  ([key, category]) => {
+                    const isOpen =
+                      mobileCategory === key;
 
-                  return (
-                    <div
-                      key={key}
-                      className="border-b border-(--border)"
-                    >
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setMobileCategory(isOpen ? null : key)
-                        }
-                        className="flex w-full items-center justify-between py-4 text-left text-base font-medium"
+                    return (
+                      <div
+                        key={key}
+                        className="border-b border-(--border)"
                       >
-                        {category.label}
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setMobileCategory(
+                              isOpen ? null : key
+                            )
+                          }
+                          className="flex w-full items-center justify-between py-4 text-left text-base font-medium"
+                        >
+                          {category.label}
 
-                        <ChevronRight
-                          size={17}
-                          className={`text-(--muted) transition-transform ${
-                            isOpen ? "rotate-90" : ""
-                          }`}
-                        />
-                      </button>
+                          <ChevronRight
+                            size={17}
+                            className={`text-(--muted) transition-transform ${
+                              isOpen
+                                ? "rotate-90"
+                                : ""
+                            }`}
+                          />
+                        </button>
 
-                      {isOpen && (
-                        <div className="pb-4 pl-3">
-                          <Link
-                            href={category.href}
-                            onClick={() => setMobileOpen(false)}
-                            className="mb-4 block text-sm font-medium underline underline-offset-4"
-                          >
-                            View All {category.label}
-                          </Link>
+                        {isOpen && (
+                          <div className="pb-4 pl-3">
 
-                          <div className="space-y-5">
-                            {category.sections.map((section) => (
-                              <div key={section.title}>
-                                <p className="mb-2 text-xs font-medium text-(--muted)">
-                                  {section.title}
-                                </p>
+                            <Link
+                              href={category.href}
+                              onClick={() =>
+                                setMobileOpen(false)
+                              }
+                              className="mb-4 block text-sm font-medium underline underline-offset-4"
+                            >
+                              View All {category.label}
+                            </Link>
 
-                                <div className="space-y-2">
-                                  {section.items.map((item) => (
-                                    <Link
-                                      key={item.label}
-                                      href={item.href}
-                                      onClick={() => setMobileOpen(false)}
-                                      className="block text-sm"
-                                    >
-                                      {item.label}
-                                    </Link>
-                                  ))}
-                                </div>
-                              </div>
-                            ))}
+                            <div className="space-y-5">
+                              {category.sections.map(
+                                (section) => (
+                                  <div
+                                    key={section.title}
+                                  >
+                                    <p className="mb-2 text-xs font-medium text-(--muted)">
+                                      {section.title}
+                                    </p>
+
+                                    <div className="space-y-2">
+                                      {section.items.map(
+                                        (item) => (
+                                          <Link
+                                            key={
+                                              item.label
+                                            }
+                                            href={
+                                              item.href
+                                            }
+                                            onClick={() =>
+                                              setMobileOpen(
+                                                false
+                                              )
+                                            }
+                                            className="block text-sm"
+                                          >
+                                            {item.label}
+                                          </Link>
+                                        )
+                                      )}
+                                    </div>
+                                  </div>
+                                )
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
+                        )}
+                      </div>
+                    );
+                  }
+                )}
               </div>
             </div>
 
@@ -267,35 +339,66 @@ export default function Navbar() {
               </p>
 
               <div className="border-t border-(--border)">
+
+                {/* My Account */}
                 <Link
                   href="/account"
-                  onClick={() => setMobileOpen(false)}
+                  onClick={() =>
+                    setMobileOpen(false)
+                  }
                   className="flex items-center gap-3 border-b border-(--border) py-4 text-sm"
                 >
-                  <User size={17} strokeWidth={1.6} />
+                  <User
+                    size={17}
+                    strokeWidth={1.6}
+                  />
+
                   My Account
                 </Link>
 
+                {/* Wishlist */}
                 <Link
                   href="/wishlist"
-                  onClick={() => setMobileOpen(false)}
+                  onClick={() =>
+                    setMobileOpen(false)
+                  }
                   className="flex items-center gap-3 border-b border-(--border) py-4 text-sm"
                 >
-                  <Heart size={17} strokeWidth={1.6} />
+                  <Heart
+                    size={17}
+                    strokeWidth={1.6}
+                  />
+
                   Wishlist
                 </Link>
 
+                {/* Cart */}
                 <Link
                   href="/cart"
-                  onClick={() => setMobileOpen(false)}
+                  onClick={() =>
+                    setMobileOpen(false)
+                  }
                   className="flex items-center gap-3 py-4 text-sm"
                 >
-                  <ShoppingBag size={17} strokeWidth={1.6} />
+                  <ShoppingBag
+                    size={17}
+                    strokeWidth={1.6}
+                  />
+
                   Cart
+
+                  {isHydrated &&
+                    cartCount > 0 && (
+                      <span className="ml-auto text-xs text-(--muted)">
+                        {cartCount}{" "}
+                        {cartCount === 1
+                          ? "item"
+                          : "items"}
+                      </span>
+                    )}
                 </Link>
               </div>
             </div>
-
           </div>
         </div>
       )}
