@@ -6,7 +6,7 @@ import { ArrowUpRight } from "lucide-react";
 import { motion, useMotionValue, useAnimationFrame } from "framer-motion";
 
 import { products } from "@/data/products";
-import ProductCard from "@/components/products/ProductCard";
+import ProductCard from "../Products/ProductCard";
 
 const SPEED = 40; // pixels per second — increase/decrease to taste
 
@@ -27,7 +27,7 @@ export default function BestSellers({ direction = "left" }) {
     if (direction === "right" && trackRef.current) {
       x.set(-(trackRef.current.scrollWidth / 2));
     }
-  }, [direction]);
+  }, [direction, x]);
 
   useAnimationFrame((_, delta) => {
     if (isHovered.current || !trackRef.current) return;
@@ -44,19 +44,19 @@ export default function BestSellers({ direction = "left" }) {
   });
 
   return (
-    <section className="bg-[var(--background)] px-6 py-20 sm:px-10 sm:py-24 lg:px-16 lg:py-28">
-      <div className="mx-auto max-w-[1440px]">
+    <section className="bg-(--background) px-6 py-20 sm:px-10 sm:py-24 lg:px-16 lg:py-28">
+      <div className="mx-auto max-w-360">
 
         {/* Heading */}
         <div className="mb-10 flex items-end justify-between gap-6 sm:mb-12">
           <div>
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-(--muted)">
               Loved by many
             </p>
             <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">
               Best Sellers
             </h2>
-            <p className="mt-3 max-w-md text-sm leading-relaxed text-[var(--muted)] sm:text-base">
+            <p className="mt-3 max-w-md text-sm leading-relaxed text-(--muted) sm:text-base">
               The pieces our customers keep coming back for.
             </p>
           </div>
@@ -84,7 +84,7 @@ export default function BestSellers({ direction = "left" }) {
             {marqueeItems.map((product, index) => (
               <div
                 key={`${product.id}-${index}`}
-                className="w-[45vw] shrink-0 sm:w-[260px] lg:w-[300px]"
+                className="w-[45vw] shrink-0 sm:w-65 lg:w-75"
               >
                 <ProductCard product={product} />
               </div>
