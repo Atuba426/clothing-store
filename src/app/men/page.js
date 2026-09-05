@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 
 import { products } from "@/data/products";
-import ProductCard from "@/components/products/ProductCard";
+import ProductCard from "@/components/Products/ProductCard";
 import FilterSidebar from "@/components/men/FilterSidebar";
 
 const EMPTY_FILTERS = {
