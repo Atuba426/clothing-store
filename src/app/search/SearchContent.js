@@ -83,7 +83,7 @@ export default function SearchContent() {
                 key={product.id}
                 href={
                   product.href ||
-                  `/products/${product.id}`
+                  `/product/${product.id}`
                 }
                 className="group"
               >
