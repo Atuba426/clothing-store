@@ -1,7 +1,7 @@
 import { Manrope } from "next/font/google";
 import "./globals.css";
 import AnnouncementBar from "@/components/navigation/AnnouncementBar";
-import Navbar from "@/components/navigation/navbar";
+import Navbar from "@/components/navigation/Navbar";
 import Footer from "@/components/navigation/Footer";
 import OtpLoginModal from "@/components/auth/OtpLoginModal";
 import { CartProvider } from "@/context/cartContext";
