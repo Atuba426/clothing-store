@@ -5,7 +5,7 @@ import { ArrowUpRight } from "lucide-react";
 import { motion } from "framer-motion";
 
 import { products } from "@/data/products";
-import ProductCard from "@/components/products/ProductCard";
+import ProductCard from "../Products/ProductCard";
 
 export default function NewArrivals() {
   return (
