@@ -1,17 +1,28 @@
 "use client";
 
 import { useContext, useState } from "react";
-import { Heart, Minus, Plus, ShoppingBag } from "lucide-react";
+import {
+  Heart,
+  Minus,
+  Plus,
+  ShoppingBag,
+} from "lucide-react";
 
+import { WishlistContext } from "@/context/WishlistContext";
 import { CartContext } from "@/context/cartContext";
 
 export default function ProductPurchase({ product, sizes }) {
   const { addToCart } = useContext(CartContext);
 
-  const availableColors = product.colors || [];
+  const {
+    toggleWishlist,
+    isInWishlist,
+  } = useContext(WishlistContext);
+
+  const availableColors = product?.colors || [];
 
   const [selectedColor, setSelectedColor] = useState(
-    product.color || availableColors[0] || ""
+    product?.color || availableColors[0] || ""
   );
 
   const [selectedSize, setSelectedSize] = useState(
@@ -19,6 +30,13 @@ export default function ProductPurchase({ product, sizes }) {
   );
 
   const [quantity, setQuantity] = useState(1);
+
+  // Check wishlist status
+  const isWishlisted = isInWishlist(product?.id);
+
+  // --------------------------------------------------
+  // ADD TO CART
+  // --------------------------------------------------
 
   const handleAddToCart = () => {
     addToCart({
@@ -29,6 +47,10 @@ export default function ProductPurchase({ product, sizes }) {
     });
   };
 
+  // --------------------------------------------------
+  // QUANTITY
+  // --------------------------------------------------
+
   const increaseQuantity = () => {
     setQuantity((current) => current + 1);
   };
@@ -37,9 +59,14 @@ export default function ProductPurchase({ product, sizes }) {
     setQuantity((current) => Math.max(1, current - 1));
   };
 
+  // --------------------------------------------------
+  // RENDER
+  // --------------------------------------------------
+
   return (
     <>
       {/* COLOR */}
+
       {availableColors.length > 0 && (
         <div className="mt-7">
           <div className="flex items-center justify-between">
@@ -57,7 +84,9 @@ export default function ProductPurchase({ product, sizes }) {
               <button
                 key={color}
                 type="button"
-                onClick={() => setSelectedColor(color)}
+                onClick={() =>
+                  setSelectedColor(color)
+                }
                 className={`border px-4 py-2 text-xs transition ${
                   selectedColor === color
                     ? "border-black bg-black text-white"
@@ -72,6 +101,7 @@ export default function ProductPurchase({ product, sizes }) {
       )}
 
       {/* SIZE */}
+
       <div className="mt-7">
         <div className="flex items-center justify-between">
           <p className="text-sm font-medium">
@@ -87,7 +117,7 @@ export default function ProductPurchase({ product, sizes }) {
         </div>
 
         <div className="mt-3 grid grid-cols-5 gap-2">
-          {sizes.map((size) => (
+          {sizes?.map((size) => (
             <button
               key={size}
               type="button"
@@ -105,6 +135,7 @@ export default function ProductPurchase({ product, sizes }) {
       </div>
 
       {/* QUANTITY */}
+
       <div className="mt-7">
         <p className="text-sm font-medium">
           Quantity
@@ -136,7 +167,11 @@ export default function ProductPurchase({ product, sizes }) {
       </div>
 
       {/* ACTIONS */}
+
       <div className="mt-7 flex gap-2.5">
+
+        {/* ADD TO BAG */}
+
         <button
           type="button"
           onClick={handleAddToCart}
@@ -150,14 +185,30 @@ export default function ProductPurchase({ product, sizes }) {
           Add to Bag
         </button>
 
+        {/* WISHLIST */}
+
         <button
           type="button"
-          aria-label="Add to wishlist"
-          className="flex h-12 w-12 shrink-0 items-center justify-center border border-black/15 transition hover:border-black"
+          onClick={() => toggleWishlist(product)}
+          aria-label={
+            isWishlisted
+              ? "Remove from wishlist"
+              : "Add to wishlist"
+          }
+          className={`flex h-12 w-12 shrink-0 items-center justify-center border transition ${
+            isWishlisted
+              ? "border-black bg-black text-white"
+              : "border-black/15 hover:border-black"
+          }`}
         >
           <Heart
             size={18}
             strokeWidth={1.6}
+            fill={
+              isWishlisted
+                ? "currentColor"
+                : "none"
+            }
           />
         </button>
       </div>

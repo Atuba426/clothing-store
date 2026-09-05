@@ -37,6 +37,12 @@ export default function Navbar() {
   // Cart Context
   const { cartItems, isHydrated } = useContext(CartContext);
 
+  // Wishlist Context
+  const {
+    wishlistCount,
+    isHydrated: wishlistHydrated,
+  } = useContext(WishlistContext);
+
   // Calculate total quantity in cart
   const cartCount = isHydrated
     ? cartItems.reduce(
@@ -117,11 +123,8 @@ export default function Navbar() {
       ],
 
       threshold: 0.4,
-
       ignoreLocation: true,
-
       minMatchCharLength: 2,
-
       includeScore: true,
     });
   }, []);
@@ -183,11 +186,6 @@ export default function Navbar() {
   const closeMegaMenu = () => {
     setActiveCategory(null);
   };
-  //wishlist 
-  const {
-    wishlistCount,
-    isHydrated: wishlistHydrated,
-  } = useContext(WishlistContext);
 
   // --------------------------------------------------
   // RENDER
@@ -300,98 +298,91 @@ export default function Navbar() {
                   SEARCH DROPDOWN
               ===================================== */}
 
-              {searchFocused && searchQuery.trim().length >= 2 && (
-                <div
-                  className="absolute left-0 right-0 top-[calc(100%+10px)] z-100 overflow-hidden rounded-2xl border border-(--border) bg-white shadow-[0_20px_50px_rgba(0,0,0,0.12)]"
-                  onMouseDown={(e) => e.preventDefault()}
-                >
-                  {searchResults.length > 0 ? (
-                    <>
-                      <div className="border-b border-(--border) px-4 py-3">
-                        <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-(--muted)">
-                          Products
+              {searchFocused &&
+                searchQuery.trim().length >= 2 && (
+                  <div
+                    className="absolute left-0 right-0 top-[calc(100%+10px)] z-100 overflow-hidden rounded-2xl border border-(--border) bg-white shadow-[0_20px_50px_rgba(0,0,0,0.12)]"
+                    onMouseDown={(e) => e.preventDefault()}
+                  >
+                    {searchResults.length > 0 ? (
+                      <>
+                        <div className="border-b border-(--border) px-4 py-3">
+                          <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-(--muted)">
+                            Products
+                          </p>
+                        </div>
+
+                        <div className="max-h-105 overflow-y-auto">
+                          {searchResults.map((product) => (
+                            <Link
+                              key={product.id}
+                              href={
+                                product.href ||
+                                `/products/${product.id}`
+                              }
+                              onClick={handleProductClick}
+                              className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-neutral-50"
+                            >
+                              <div className="relative h-16 w-12 shrink-0 overflow-hidden bg-neutral-100">
+                                {product.images?.[0] && (
+                                  <img
+                                    src={product.images[0]}
+                                    alt={product.name}
+                                    className="h-full w-full object-cover"
+                                  />
+                                )}
+                              </div>
+
+                              <div className="min-w-0 flex-1">
+                                <p className="truncate text-sm font-medium text-black">
+                                  {product.name}
+                                </p>
+
+                                <p className="mt-0.5 text-xs text-(--muted)">
+                                  {product.category}
+                                  {product.subcategory
+                                    ? ` · ${product.subcategory}`
+                                    : ""}
+                                </p>
+                              </div>
+
+                              <p className="shrink-0 text-sm font-medium">
+                                ₹
+                                {product.price?.toLocaleString(
+                                  "en-IN"
+                                )}
+                              </p>
+                            </Link>
+                          ))}
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={handleSearch}
+                          className="flex w-full items-center justify-center border-t border-(--border) px-4 py-3 text-xs font-semibold transition-colors hover:bg-neutral-50"
+                        >
+                          View all results →
+                        </button>
+                      </>
+                    ) : (
+                      <div className="px-5 py-8 text-center">
+                        <Search
+                          size={22}
+                          strokeWidth={1.5}
+                          className="mx-auto mb-3 text-(--muted)"
+                        />
+
+                        <p className="text-sm font-medium">
+                          No products found
+                        </p>
+
+                        <p className="mt-1 text-xs text-(--muted)">
+                          Try another search.
                         </p>
                       </div>
-
-                      <div className="max-h-105 overflow-y-auto">
-                        {searchResults.map((product) => (
-                          <Link
-                            key={product.id}
-                            href={
-                              product.href ||
-                              `/products/${product.id}`
-                            }
-                            onClick={handleProductClick}
-                            className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-neutral-50"
-                          >
-                            {/* Product image */}
-
-                            <div className="relative h-16 w-12 shrink-0 overflow-hidden bg-neutral-100">
-                              {product.images?.[0] && (
-                                <img
-                                  src={product.images[0]}
-                                  alt={product.name}
-                                  className="h-full w-full object-cover"
-                                />
-                              )}
-                            </div>
-
-                            {/* Product information */}
-
-                            <div className="min-w-0 flex-1">
-                              <p className="truncate text-sm font-medium text-black">
-                                {product.name}
-                              </p>
-
-                              <p className="mt-0.5 text-xs text-(--muted)">
-                                {product.category}
-                                {product.subcategory
-                                  ? ` · ${product.subcategory}`
-                                  : ""}
-                              </p>
-                            </div>
-
-                            {/* Price */}
-
-                            <p className="shrink-0 text-sm font-medium">
-                              ₹
-                              {product.price?.toLocaleString(
-                                "en-IN"
-                              )}
-                            </p>
-                          </Link>
-                        ))}
-                      </div>
-
-                      {/* View all */}
-
-                      <button
-                        type="button"
-                        onClick={handleSearch}
-                        className="flex w-full items-center justify-center border-t border-(--border) px-4 py-3 text-xs font-semibold transition-colors hover:bg-neutral-50"
-                      >
-                        View all results →
-                      </button>
-                    </>
-                  ) : (
-                    <div className="px-5 py-8 text-center">
-                      <Search
-                        size={22}
-                        strokeWidth={1.5}
-                        className="mx-auto mb-3 text-(--muted)"
-                      />
-
-                      <p className="text-sm font-medium">
-                        No products found
-                      </p>
-
-                      <p className="mt-1 text-xs text-(--muted)">
-                        Try another search.
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
+                    )}
+                  </div>
+                )}
             </div>
           </div>
 
@@ -417,22 +408,22 @@ export default function Navbar() {
             {/* Wishlist */}
 
             <Link
-  href="/wishlist"
-  aria-label={`Wishlist with ${wishlistCount} items`}
-  className="relative"
->
-  <Heart
-    size={21}
-    strokeWidth={1.6}
-    className="transition-opacity hover:opacity-60"
-  />
+              href="/wishlist"
+              aria-label={`Wishlist with ${wishlistCount} items`}
+              className="relative"
+            >
+              <Heart
+                size={21}
+                strokeWidth={1.6}
+                className="transition-opacity hover:opacity-60"
+              />
 
-  {wishlistHydrated && wishlistCount > 0 && (
-    <span className="absolute -right-2.5 -top-2 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-black px-1 text-[9px] font-semibold text-white">
-      {wishlistCount}
-    </span>
-  )}
-</Link>
+              {wishlistHydrated && wishlistCount > 0 && (
+                <span className="absolute -right-2.5 -top-2 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-black px-1 text-[9px] font-semibold text-white">
+                  {wishlistCount}
+                </span>
+              )}
+            </Link>
 
             {/* Cart */}
 
@@ -467,12 +458,59 @@ export default function Navbar() {
               type="button"
               aria-label="Search"
               onClick={() => setMobileOpen(true)}
+              className="flex items-center justify-center"
             >
               <Search
                 size={21}
                 strokeWidth={1.7}
               />
             </button>
+
+            {/* Mobile Wishlist + Cart */}
+
+            {!mobileOpen && (
+              <>
+                {/* Wishlist */}
+
+                <Link
+                  href="/wishlist"
+                  aria-label={`Wishlist with ${wishlistCount} items`}
+                  className="relative flex items-center justify-center"
+                >
+                  <Heart
+                    size={21}
+                    strokeWidth={1.6}
+                    className="transition-opacity hover:opacity-60"
+                  />
+
+                  {wishlistHydrated && wishlistCount > 0 && (
+                    <span className="absolute -right-2.5 -top-2 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-black px-1 text-[9px] font-semibold text-white">
+                      {wishlistCount}
+                    </span>
+                  )}
+                </Link>
+
+                {/* Cart */}
+
+                <Link
+                  href="/cart"
+                  aria-label={`Cart with ${cartCount} items`}
+                  className="relative flex items-center justify-center"
+                >
+                  <ShoppingBag
+                    size={21}
+                    strokeWidth={1.6}
+                    className="transition-opacity hover:opacity-60"
+                  />
+
+                  {isHydrated && cartCount > 0 && (
+                    <span className="absolute -right-2.5 -top-2 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-black px-1 text-[9px] font-semibold text-white">
+                      {cartCount}
+                    </span>
+                  )}
+                </Link>
+              </>
+            )}
 
             {/* Mobile Menu */}
 
@@ -486,6 +524,7 @@ export default function Navbar() {
               onClick={() =>
                 setMobileOpen((value) => !value)
               }
+              className="flex items-center justify-center"
             >
               {mobileOpen ? (
                 <X
@@ -765,22 +804,29 @@ export default function Navbar() {
                 {/* Wishlist */}
 
                 <Link
-  href="/wishlist"
-  aria-label={`Wishlist with ${wishlistCount} items`}
-  className="relative"
->
-  <Heart
-    size={21}
-    strokeWidth={1.6}
-    className="transition-opacity hover:opacity-60"
-  />
+                  href="/wishlist"
+                  onClick={() =>
+                    setMobileOpen(false)
+                  }
+                  className="flex items-center gap-3 border-b border-(--border) py-4 text-sm"
+                >
+                  <Heart
+                    size={17}
+                    strokeWidth={1.6}
+                  />
 
-  {wishlistHydrated && wishlistCount > 0 && (
-    <span className="absolute -right-2.5 -top-2 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-black px-1 text-[9px] font-semibold text-white">
-      {wishlistCount}
-    </span>
-  )}
-</Link>
+                  Wishlist
+
+                  {wishlistHydrated &&
+                    wishlistCount > 0 && (
+                      <span className="ml-auto text-xs text-(--muted)">
+                        {wishlistCount}{" "}
+                        {wishlistCount === 1
+                          ? "item"
+                          : "items"}
+                      </span>
+                    )}
+                </Link>
 
                 {/* Cart */}
 

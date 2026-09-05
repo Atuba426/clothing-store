@@ -92,7 +92,7 @@ export default function AccountDashboard() {
         {/* Dashboard button */}
         <Link
           href="/account/dashboard"
-          onClick={() => setShowSuccessPopup(false)}
+          onClick={() => setShowSuccess(false)}
           className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-black px-5 py-3.5 text-xs font-semibold uppercase tracking-[0.12em] text-white transition hover:bg-neutral-800"
         >
           Go to My Account
