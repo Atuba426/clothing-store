@@ -8,7 +8,7 @@ export const heroSlides = [
       description:
         "Fewer, better pieces — designed for everyday wear and made to stay in your wardrobe.",
       cta: "Explore Collection",
-      href: "/collections",
+      href: "/collection",
     },
     {
       id: 2,
@@ -19,7 +19,7 @@ export const heroSlides = [
       description:
         "Refined silhouettes and timeless pieces designed to move with you.",
       cta: "Explore Collection",
-      href: "/collections",
+      href: "/collection",
     },
     {
       id: 3,
@@ -30,7 +30,7 @@ export const heroSlides = [
       description:
         "A considered edit of modern wardrobe essentials.",
       cta: "Explore Collection",
-      href: "/collections",
+      href: "/collection",
     },
     {
       id: 4,
@@ -41,6 +41,6 @@ export const heroSlides = [
       description:
         "Modern clothing with a focus on quality, comfort and timeless design.",
       cta: "Explore Collection",
-      href: "/collections",
+      href: "/collection",
     },
   ];

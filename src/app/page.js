@@ -5,6 +5,8 @@ import EditorialCollection from "@/components/Home/EditorialCollection";
 import BestSellers from "../components/Home/BestSellers";
 import PromotionalSection from "@/components/Home/PromotionalCollection";
 import ShopBenefits from "@/components/Home/ShopBenefits";
+import TrendingSection from "@/components/Home/trendingSection";
+import Reviews from "@/components/Home/Reviews";
 import Newsletter from "@/components/Home/Newsletter";
 
 export default function Home() {
@@ -17,6 +19,8 @@ export default function Home() {
       <BestSellers/>
       <PromotionalSection/>
       <ShopBenefits/>
+      <TrendingSection/>
+      <Reviews/>
       <Newsletter/>
     </main>
   );

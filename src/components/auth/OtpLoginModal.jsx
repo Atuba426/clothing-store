@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
   CheckCircle2,
@@ -9,7 +10,9 @@ import {
   X,
 } from "lucide-react";
 
-export default function OtpLoginModal() {
+export default function OtpLoginModal({ mode = "popup" }) {
+  const router = useRouter();
+
   const [isOpen, setIsOpen] = useState(false);
   const [step, setStep] = useState("phone");
   const [phone, setPhone] = useState("");
@@ -17,7 +20,19 @@ export default function OtpLoginModal() {
   const [error, setError] = useState("");
   const [resendTimer, setResendTimer] = useState(0);
 
+  // --------------------------------------------------
+  // OPEN MODAL
+  // --------------------------------------------------
+
   useEffect(() => {
+    // /login page → open immediately
+    if (mode === "page") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIsOpen(true);
+      return;
+    }
+
+    // Normal website popup → open after 10 seconds
     const alreadyShown = sessionStorage.getItem("otp-popup-shown");
 
     if (alreadyShown) return;
@@ -28,9 +43,12 @@ export default function OtpLoginModal() {
     }, 10000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [mode]);
 
-  // Resend countdown
+  // --------------------------------------------------
+  // RESEND COUNTDOWN
+  // --------------------------------------------------
+
   useEffect(() => {
     if (resendTimer <= 0) return;
 
@@ -41,7 +59,9 @@ export default function OtpLoginModal() {
     return () => clearInterval(timer);
   }, [resendTimer]);
 
-  if (!isOpen) return null;
+  // --------------------------------------------------
+  // SEND OTP
+  // --------------------------------------------------
 
   const handleSendOtp = (e) => {
     e.preventDefault();
@@ -67,6 +87,10 @@ export default function OtpLoginModal() {
     setResendTimer(30);
   };
 
+  // --------------------------------------------------
+  // VERIFY OTP
+  // --------------------------------------------------
+
   const handleVerifyOtp = (e) => {
     e.preventDefault();
 
@@ -89,13 +113,22 @@ export default function OtpLoginModal() {
     setStep("success");
   };
 
+  // --------------------------------------------------
+  // RESEND OTP
+  // --------------------------------------------------
+
   const handleResend = () => {
     if (resendTimer > 0) return;
 
     console.log("Demo OTP resent:", "123456");
+
     setResendTimer(30);
     setError("");
   };
+
+  // --------------------------------------------------
+  // BACK
+  // --------------------------------------------------
 
   const handleBack = () => {
     setStep("phone");
@@ -103,14 +136,37 @@ export default function OtpLoginModal() {
     setError("");
   };
 
+  // --------------------------------------------------
+  // CLOSE
+  // --------------------------------------------------
+
   const handleClose = () => {
+    // If modal was opened through /login,
+    // go back to the previous page.
+    if (mode === "page") {
+      router.back();
+      return;
+    }
+
+    // If it was the automatic popup,
+    // simply close it.
     setIsOpen(false);
   };
+
+  // --------------------------------------------------
+  // DON'T RENDER WHEN CLOSED
+  // --------------------------------------------------
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/40 px-4 backdrop-blur-sm">
       <div className="relative w-full max-w-md overflow-hidden rounded-3xl bg-white p-6 shadow-2xl sm:p-8">
-        {/* Close button */}
+
+        {/* =================================================
+            CLOSE BUTTON
+        ================================================= */}
+
         <button
           type="button"
           onClick={handleClose}
@@ -120,7 +176,10 @@ export default function OtpLoginModal() {
           <X size={18} />
         </button>
 
-        {/* PHONE STEP */}
+        {/* =================================================
+            PHONE STEP
+        ================================================= */}
+
         {step === "phone" && (
           <>
             <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-black text-white">
@@ -137,6 +196,7 @@ export default function OtpLoginModal() {
             </p>
 
             <form onSubmit={handleSendOtp} className="mt-7">
+
               <label
                 htmlFor="otp-phone"
                 className="mb-2 block text-sm font-medium text-gray-800"
@@ -145,6 +205,7 @@ export default function OtpLoginModal() {
               </label>
 
               <div className="flex overflow-hidden rounded-xl border border-gray-200 bg-gray-50 transition focus-within:border-gray-900 focus-within:bg-white">
+
                 <div className="flex items-center border-r border-gray-200 px-3 text-sm font-medium text-gray-600">
                   +91
                 </div>
@@ -163,6 +224,7 @@ export default function OtpLoginModal() {
                   className="min-w-0 flex-1 bg-transparent px-4 py-3.5 text-sm text-gray-900 outline-none placeholder:text-gray-400"
                   required
                 />
+
               </div>
 
               {error && (
@@ -180,12 +242,17 @@ export default function OtpLoginModal() {
             </form>
 
             <div className="mt-5 flex items-start gap-2 text-xs leading-5 text-gray-400">
-              <ShieldCheck size={16} className="mt-0.5 shrink-0" />
+
+              <ShieldCheck
+                size={16}
+                className="mt-0.5 shrink-0"
+              />
 
               <p>
-                We&apos;ll use your mobile number only for authentication and your
-                account.
+                We&apos;ll use your mobile number only for authentication and
+                your account.
               </p>
+
             </div>
 
             <button
@@ -198,7 +265,10 @@ export default function OtpLoginModal() {
           </>
         )}
 
-        {/* OTP STEP */}
+        {/* =================================================
+            OTP STEP
+        ================================================= */}
+
         {step === "otp" && (
           <>
             <button
@@ -227,6 +297,7 @@ export default function OtpLoginModal() {
             </p>
 
             <form onSubmit={handleVerifyOtp} className="mt-7">
+
               <label
                 htmlFor="otp-code"
                 className="mb-2 block text-sm font-medium text-gray-800"
@@ -262,10 +333,13 @@ export default function OtpLoginModal() {
               >
                 Verify & Continue
               </button>
+
             </form>
 
             <div className="mt-5 text-center text-sm text-gray-500">
+
               Didn&apos;t receive the code?{" "}
+
               <button
                 type="button"
                 onClick={handleResend}
@@ -276,22 +350,33 @@ export default function OtpLoginModal() {
                   ? `Resend in ${resendTimer}s`
                   : "Resend OTP"}
               </button>
+
             </div>
 
             <div className="mt-6 rounded-xl bg-gray-50 px-4 py-3 text-center text-xs text-gray-500">
+
               <span className="font-semibold text-gray-700">
                 Demo mode:
               </span>{" "}
+
               use <strong>123456</strong>
+
             </div>
           </>
         )}
 
-        {/* SUCCESS STEP */}
+        {/* =================================================
+            SUCCESS STEP
+        ================================================= */}
+
         {step === "success" && (
           <div className="py-8 text-center">
+
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
-              <CheckCircle2 size={32} className="text-gray-900" />
+              <CheckCircle2
+                size={32}
+                className="text-gray-900"
+              />
             </div>
 
             <h2 className="mt-5 text-2xl font-semibold text-gray-900">
@@ -309,8 +394,10 @@ export default function OtpLoginModal() {
             >
               Continue Shopping
             </button>
+
           </div>
         )}
+
       </div>
     </div>
   );

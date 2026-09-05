@@ -5,6 +5,7 @@ import Navbar from "@/components/navigation/navbar";
 import Footer from "@/components/navigation/Footer";
 import OtpLoginModal from "@/components/auth/OtpLoginModal";
 import { CartProvider } from "@/context/cartContext";
+import { WishlistProvider } from "@/context/WishlistContext";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -20,6 +21,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={manrope.variable}>
+        <WishlistProvider>
         <CartProvider>
         <AnnouncementBar />
         <Navbar />
@@ -27,6 +29,7 @@ export default function RootLayout({ children }) {
         <OtpLoginModal/>
         <Footer />
         </CartProvider>
+        </WishlistProvider>
       </body>
     </html>
   );

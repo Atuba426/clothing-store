@@ -59,7 +59,7 @@ export default function OrderSuccessPage() {
           </Link>
 
           <Link
-            href="/account/orders"
+            href="/all-orders"
             className="flex h-12 items-center justify-center border border-black px-7 text-[11px] font-semibold uppercase tracking-[0.12em] transition hover:bg-black hover:text-white"
           >
             View Orders

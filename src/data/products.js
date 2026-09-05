@@ -14,6 +14,7 @@ export const products = [
 
     images: [
       "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=900&q=85",
+      
     ],
 
     colors: ["White"],
